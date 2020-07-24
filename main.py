@@ -29,7 +29,7 @@ for episode in range(num_episodes):
         rewards.append(reward)
 
     if finished:
-        policyNet.policy_gradients(reward, log_prob)
+        policyNet.policy_gradients(rewards, probs, policyNet)
         numsteps.append(steps)
         avg_numsteps.append(numpy.mean(numsteps[-10:]))
         rewards.append(numpy.sum(rewards))
