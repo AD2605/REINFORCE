@@ -3,9 +3,14 @@ from REINFORCE import PolicyNet
 import numpy
 
 env = gym.make('BipedalWalker-v3')
+env.reset()
 num_episodes = 10000
 max_steps = 10000
-policyNet = PolicyNet(env.observation_space.shape[0], env.action_space, 128)
+
+policyNet = PolicyNet(inputs=
+                      env.observation_space.shape[0],
+                      actions=4,
+                      hidden_size=128)
 
 numsteps = []
 rewards = []
@@ -19,7 +24,7 @@ for episode in range(num_episodes):
     for steps in range(max_steps):
         env.render()
         action, log_prob = policyNet.action(state)
-        new_state, reward, finished, _ = env.step(action)
+        new_state, reward, finished, _ = env.step(action.item())
         probs.append(log_prob)
         rewards.append(reward)
 

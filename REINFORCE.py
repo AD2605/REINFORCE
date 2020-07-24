@@ -8,9 +8,9 @@ class PolicyNet(nn.Module):
     def __init__(self, inputs, actions, hidden_size):
         super(PolicyNet, self).__init__()
         self.num_actions = actions
-        self.layer1 = nn.Linear(inputs, hidden_size).cuda()
-        self.layer2 = nn.Linear(hidden_size, actions).cuda()
-        self.prelu = nn.PReLU(hidden_size).cuda()
+        self.layer1 = nn.Linear(inputs, hidden_size)
+        self.layer2 = nn.Linear(hidden_size, actions)
+        self.prelu = nn.PReLU(hidden_size)
 
     def forward(self, x):
         x = self.layer1(x)
@@ -20,10 +20,10 @@ class PolicyNet(nn.Module):
         return nn.functional.softmax(x, dim=1)
 
     def action(self, state):
-        state = torch.from_numpy(state).float().unsqueeze(0).cuda()
+        state = torch.from_numpy(state).float().unsqueeze(0)
         actions = self.forward(state)
-        prob = numpy.random.choice(self.num_actions, p=numpy.squeeze(actions.detach().cpu().numpy()))
-        log_prob = torch.log(prob.squeeze(0)[prob])
+        prob = numpy.random.choice(self.num_actions, p=numpy.squeeze(actions.detach().numpy()))
+        log_prob = torch.log(actions.squeeze(0)[prob])
         return log_prob, prob
 
     def policy_gradients(self, rewards, log_prob, net):
