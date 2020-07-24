@@ -7,8 +7,7 @@ env.reset()
 num_episodes = 10000
 max_steps = 10000
 
-policyNet = PolicyNet(inputs=
-                      env.observation_space.shape[0],
+policyNet = PolicyNet(inputs=env.observation_space.shape[0],
                       actions=4,
                       hidden_size=128)
 
@@ -22,9 +21,9 @@ for episode in range(num_episodes):
     rewards = []
 
     for steps in range(max_steps):
-        env.render()
         action, log_prob = policyNet.action(state)
         new_state, reward, finished, _ = env.step(action.detach().numpy())
+        env.render()
         probs.append(log_prob)
         rewards.append(reward)
 
@@ -34,7 +33,5 @@ for episode in range(num_episodes):
         avg_numsteps.append(numpy.mean(numsteps[-10:]))
         rewards.append(numpy.sum(rewards))
 
-        if episode % 1 == 0:
-            print("episode: {}, total reward: {}, average_reward: {}, length: {}\n".format(episode, numpy.round(
+        print("episode: {}, total reward: {}, average_reward: {}, length: {}\n".format(episode, numpy.round(
                 numpy.sum(rewards), decimals=3), numpy.round(numpy.mean(rewards[-10:]), decimals=3), steps))
-        break

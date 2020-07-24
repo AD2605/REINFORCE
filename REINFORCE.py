@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy
+from torch.autograd import Variable
 import gym
 
 
@@ -27,7 +28,7 @@ class PolicyNet(nn.Module):
         return log_prob, prob
 
     def policy_gradients(self, rewards, log_prob, net):
-        optim = torch.optim.Adam(net.parameters(), lr=0.01)
+        optim = torch.optim.Adam(net.parameters(), lr=3e-4)
         Rewards = []
         for i in range(len(rewards)):
             G = p = 0
@@ -44,6 +45,6 @@ class PolicyNet(nn.Module):
             gradients.append(-log_prob * G)
 
         optim.zero_grad()
-        policy_gradient = torch.stack(gradients).sum()
+        policy_gradient = Variable(torch.stack(gradients).sum(), requires_grad=True)
         policy_gradient.backward()
         optim.step()
