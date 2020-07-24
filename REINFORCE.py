@@ -23,7 +23,7 @@ class PolicyNet(nn.Module):
         state = torch.from_numpy(state).float().unsqueeze(0)
         actions = self.forward(state)
         prob = numpy.random.choice(self.num_actions, p=numpy.squeeze(actions.detach().numpy()))
-        log_prob = torch.log(actions.squeeze(0)[prob])
+        log_prob = torch.log(actions.squeeze(0))
         return log_prob, prob
 
     def policy_gradients(self, rewards, log_prob, net):

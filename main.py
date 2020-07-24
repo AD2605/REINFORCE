@@ -24,7 +24,7 @@ for episode in range(num_episodes):
     for steps in range(max_steps):
         env.render()
         action, log_prob = policyNet.action(state)
-        new_state, reward, finished, _ = env.step(action.item())
+        new_state, reward, finished, _ = env.step(action.detach().numpy())
         probs.append(log_prob)
         rewards.append(reward)
 
