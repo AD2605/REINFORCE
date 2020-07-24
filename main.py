@@ -22,10 +22,13 @@ for episode in range(num_episodes):
 
     for steps in range(max_steps):
         action, log_prob = policyNet.action(state)
-        new_state, reward, finished, _ = env.step(action.detach().numpy())
+        state, reward, finished, _ = env.step(action.squeeze(0).detach().numpy())
         env.render()
         probs.append(log_prob)
         rewards.append(reward)
+        if finished:
+            break
+
 
     if finished:
         policyNet.policy_gradients(rewards, probs, policyNet)
