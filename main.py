@@ -1,10 +1,11 @@
 import gym
 from REINFORCE import PolicyNet
 import numpy
+import torch
 
 env = gym.make('BipedalWalker-v3')
 env.reset()
-num_episodes = 10000
+num_episodes = 20000
 max_steps = 10000
 
 policyNet = PolicyNet(inputs=env.observation_space.shape[0],
@@ -14,6 +15,8 @@ policyNet = PolicyNet(inputs=env.observation_space.shape[0],
 numsteps = []
 rewards = []
 avg_numsteps = []
+
+min_reward = -1000
 
 for episode in range(num_episodes):
     state = env.reset()
@@ -36,5 +39,9 @@ for episode in range(num_episodes):
         avg_numsteps.append(numpy.mean(numsteps[-10:]))
         rewards.append(numpy.sum(rewards))
 
-        print("episode: {}, total reward: {}, average_reward: {}, length: {}\n".format(episode, numpy.round(
-                numpy.sum(rewards), decimals=3), numpy.round(numpy.mean(rewards[-10:]), decimals=3), steps))
+        print("episode: {}, total reward: {}, average_reward: {}, length: {}\n".format(episode,
+                numpy.sum(rewards), numpy.round(numpy.mean(rewards[-10:]), decimals=3), steps))
+
+    if numpy.sum(rewards) > min_reward:
+        torch.save(policyNet.state_dict(), '/home/atharva/policyNet.pth')
+        min_reward = numpy.sum(rewards)

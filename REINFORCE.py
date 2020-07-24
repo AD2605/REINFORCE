@@ -41,13 +41,13 @@ class PolicyNet(nn.Module):
             G =0
             p=0
             for reward in rewards[i:]:
-                G = G + 0.9 * p * reward
+                G = G + 0.95 * p * reward
                 p = p + 1
             Rewards.append(G)
 
         Rewards = torch.tensor(Rewards)
 
-        discounted_reward = (Rewards - Rewards.mean()) / (Rewards.std()+1e+9)
+        discounted_reward = (Rewards - Rewards.mean()) / (Rewards.std()+1e+8)
 
         gradients = []
         for log_prob, G in zip(log_prob, discounted_reward):
