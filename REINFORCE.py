@@ -12,10 +12,10 @@ class PolicyNet(nn.Module):
         self.layer1 = nn.Linear(inputs, hidden_size)
         self.layer2 = nn.Linear(hidden_size, hidden_size)
         self.layer3 = nn.Linear(hidden_size, 2*hidden_size)
-        self.layer4 = nn.Linear(2*hidden_size, actions)
+        self.layer4 = nn.Linear(2*hidden_size, hidden_size)
+        self.layer5 = nn.Linear(hidden_size, actions)
 
     def forward(self, x):
-
         x = self.layer1(x)
         x = nn.functional.relu(x)
         x = self.layer2(x)
@@ -23,7 +23,8 @@ class PolicyNet(nn.Module):
         x = self.layer3(x)
         x = nn.functional.relu(x)
         x = self.layer4(x)
-
+        x = nn.functional.relu(x)
+        x = self.layer5(x)
         return x
 
     def action(self, state):
@@ -34,7 +35,7 @@ class PolicyNet(nn.Module):
         return actions, log_prob
 
     def policy_gradients(self, rewards, log_prob, net):
-        optim = torch.optim.AdamW(net.parameters(), lr=1e-3)
+        optim = torch.optim.Adam(net.parameters(), lr=1e-3)
         Rewards = []
         for i in range(len(rewards)):
             G =0
@@ -46,7 +47,7 @@ class PolicyNet(nn.Module):
 
         Rewards = torch.tensor(Rewards)
 
-        discounted_reward = (Rewards - Rewards.mean()) / (Rewards.std()+1e+8)
+        discounted_reward = (Rewards - Rewards.mean()) / (Rewards.std()+1e+9)
 
         gradients = []
         for log_prob, G in zip(log_prob, discounted_reward):
